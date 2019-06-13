@@ -19,7 +19,6 @@ class PythonServer(BaseHTTPRequestHandler):
 
         self.data_string = self.rfile.read(int(self.headers['Content-Length']))
         self.data_json = json.loads(self.data_string)
-        print(self.data_json)
 
         self.send_response(200)
         self.end_headers()
