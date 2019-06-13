@@ -26,7 +26,7 @@ class PythonServer(BaseHTTPRequestHandler):
         if 'filedata' in self.data_json and 'filename' in self.data_json:
             filedata = base64.b64decode(self.data_json['filedata'])
             filedata = np.fromstring(filedata, np.uint8)
-            img = cv2.imdecode(filedata, cv2.IMREAD_ANYCOLOR)
+            img = cv2.imdecode(filedata, cv2.IMREAD_COLOR)
             cv2.imwrite(os.path.join('./', self.data_json['filename']), img)
             print('save', self.data_json['filename'])
         else:
