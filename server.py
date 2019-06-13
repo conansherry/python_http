@@ -23,11 +23,14 @@ class PythonServer(BaseHTTPRequestHandler):
         self.send_response(200)
         self.end_headers()
 
-        filedata = base64.b64decode(self.data_json['filedata'])
-        filedata = np.fromstring(filedata, np.uint8)
-        img = cv2.imdecode(filedata, cv2.IMREAD_ANYCOLOR)
-        cv2.imwrite(os.path.join('./', self.data_json['filename']), img)
-        print('save', self.data_json['filename'])
+        if 'filedata' in self.data_json and 'filename' in self.data_json:
+            filedata = base64.b64decode(self.data_json['filedata'])
+            filedata = np.fromstring(filedata, np.uint8)
+            img = cv2.imdecode(filedata, cv2.IMREAD_ANYCOLOR)
+            cv2.imwrite(os.path.join('./', self.data_json['filename']), img)
+            print('save', self.data_json['filename'])
+        else:
+            self.wfile.write(b'Hello world')
 
 
     def do_GET(self):
