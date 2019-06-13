@@ -19,6 +19,7 @@ class PythonServer(BaseHTTPRequestHandler):
 
         self.data_string = self.rfile.read(int(self.headers['Content-Length']))
         self.data_json = json.loads(self.data_string)
+        print(self.data_json)
 
         self.send_response(200)
         self.end_headers()
@@ -37,7 +38,7 @@ class PythonServer(BaseHTTPRequestHandler):
         parsed_path = urlparse(self.path)
         filepath = os.path.join('./', parsed_path.path[1:])
         print(filepath)
-        if os.path.exists(filepath):
+        if os.path.isfile(filepath):
             self.send_response(200)
             self.send_header("Content-type", "image/jpg")
             self.end_headers()
