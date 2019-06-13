@@ -50,6 +50,6 @@ class PythonServer(BaseHTTPRequestHandler):
             self.wfile.write(b'Hello world')
 
 if __name__ =='__main__':
-    sever = HTTPServer(('localhost', 12345), PythonServer)
+    sever = HTTPServer(('', 12345), PythonServer)
     print('Starting server, use <Ctrl-C> to stop')
     sever.serve_forever()
