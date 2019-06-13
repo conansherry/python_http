@@ -7,6 +7,7 @@ import cgi
 import json
 import base64
 import numpy as np
+from lockfile import FileLock
 
 class PythonServer(BaseHTTPRequestHandler):
     def _set_headers(self):
@@ -27,11 +28,13 @@ class PythonServer(BaseHTTPRequestHandler):
             filedata = base64.b64decode(self.data_json['filedata'])
             filedata = np.fromstring(filedata, np.uint8)
             img = cv2.imdecode(filedata, cv2.IMREAD_COLOR)
-            cv2.imwrite(os.path.join('./', self.data_json['filename']), img)
+            save_file_name = os.path.join('./', self.data_json['filename'])
+            lock = FileLock(save_file_name)
+            with lock:
+                cv2.imwrite(save_file_name, img)
             print('save', self.data_json['filename'])
         else:
             self.wfile.write(b'Hello world')
-
 
     def do_GET(self):
         parsed_path = urlparse(self.path)
@@ -41,9 +44,11 @@ class PythonServer(BaseHTTPRequestHandler):
             self.send_response(200)
             self.send_header("Content-type", "image/jpg")
             self.end_headers()
-            f = open(filepath, 'rb')
-            self.wfile.write(f.read())
-            f.close()
+            lock = FileLock(filepath)
+            with lock:
+                f = open(filepath, 'rb')
+                self.wfile.write(f.read())
+                f.close()
         else:
             self.send_response(HTTPStatus.OK)
             self.end_headers()
